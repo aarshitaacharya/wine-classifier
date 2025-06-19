@@ -5,6 +5,7 @@ from sklearn.ensemble import RandomForestClassifier
 import joblib
 
 df = pd.read_csv("https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv", sep=';')
+print(df[df['quality'] == 8].sample(3))
 
 # here if quality > 6, we set it to good, else bad.
 df['target'] = (df['quality'] >=6).astype(int)
