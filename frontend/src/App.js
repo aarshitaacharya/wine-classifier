@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
+import 'tailwindcss/tailwind.css';
 
 const initialForm = {
   "Fixed Acidity": "",
@@ -13,9 +14,8 @@ const initialForm = {
   "pH": "",
   "Sulphates": "",
   "Alcohol": ""
-}
+};
 
-// Example values
 const goodWine = {
   "Fixed Acidity": 11.3,
   "Volatile Acidity": 0.62,
@@ -44,72 +44,83 @@ const badWine = {
   "Alcohol": 9.4
 };
 
-
 function App() {
   const [form, setForm] = useState(initialForm);
   const [result, setResult] = useState(null);
 
   const handleChange = (e) => {
-    setForm({
-      ...form, [e.target.name]: e.target.value
-    })
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async () => {
-    try{
+    try {
       const numericForm = {};
-      for(const key in form) numericForm[key] = parseFloat(form[key]);
-      console.log("Sending to backend:", numericForm);
+      for (const key in form) numericForm[key] = parseFloat(form[key]);
       const res = await axios.post("http://127.0.0.1:5000/predict", numericForm);
-
       setResult(res.data.result);
-    }catch (err){
+    } catch (err) {
       console.error(err);
       setResult("Error");
     }
-  }
+  };
 
   const fillExample = (type) => {
-    setForm(type === "good" ? goodWine: badWine)
-  }
-
+    setForm(type === "good" ? goodWine : badWine);
+  };
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', padding: 20 }}>
-          <div style={{ width: '50%' }}>
-            <h2>🍷 Wine Quality Predictor</h2>
+    <div className="min-h-screen animated-gradient flex items-center justify-center p-6">
+      <div className="w-full max-w-5xl bg-white shadow-2xl rounded-2xl flex flex-col md:flex-row overflow-hidden">
+        <div className="w-full md:w-2/3 p-8">
+          <h2 className="text-3xl font-bold text-[#5d0e41] mb-6">🍷 Wine Quality Predictor</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {Object.keys(form).map((key) => (
               <div key={key}>
-                <label>{key}</label><br />
+                <label className="block text-gray-700 font-semibold mb-1">{key}</label>
                 <input
                   type="number"
                   name={key}
                   value={form[key]}
                   onChange={handleChange}
                   step="any"
-                  style={{ width: "100%", marginBottom: 10 }}
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5d0e41]"
                 />
               </div>
             ))}
-            <button onClick={handleSubmit}>Predict Quality</button>
-            {result && (
-              <h3 style={{ marginTop: 20 }}>
-                Result: {result === "Good" ? "Good Wine 🍷" : "Bad Wine 🙁"}
-              </h3>
-            )}
           </div>
+          <button
+            onClick={handleSubmit}
+            className="mt-6 bg-[#5d0e41] text-white py-2 px-6 rounded-lg hover:bg-[#4a0c35] transition"
+          >
+            Predict Quality
+          </button>
+          {result && (
+            <div className="mt-4 text-xl font-medium">
+              Result: {result === "Good" ? "Good Wine 🍷" : "Bad Wine 🙁"}
+            </div>
+          )}
+        </div>
 
-          {/* Right Column: Example Cloud */}
-          <div style={{ width: '30%', marginLeft: 30 }}>
-            <h4>💡 Example Values</h4>
-            <button onClick={() => fillExample("good")} style={{ marginBottom: 10 }}>
-              Good Wine
-            </button><br />
-            <button onClick={() => fillExample("bad")}>
-              Bad Wine
+        <div className="w-full md:w-1/3 bg-[#a34343] text-white p-6 flex flex-col justify-between">
+          <div>
+            <h4 className="text-xl font-bold mb-4">💡 Example Values</h4>
+            <button
+              onClick={() => fillExample("good")}
+              className="w-full mb-3 bg-white text-[#a34343] font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition"
+            >
+              Prefill Good Wine
+            </button>
+            <button
+              onClick={() => fillExample("bad")}
+              className="w-full bg-white text-[#a34343] font-semibold py-2 px-4 rounded-lg hover:bg-gray-100 transition"
+            >
+              Prefill Bad Wine
             </button>
           </div>
+          <p className="mt-8 text-sm italic opacity-70">Wine predictions powered by Aarshita 🍇</p>
         </div>
+      </div>
+    </div>
   );
 }
 
