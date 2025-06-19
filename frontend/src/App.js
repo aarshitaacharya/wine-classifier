@@ -56,7 +56,8 @@ function App() {
     try {
       const numericForm = {};
       for (const key in form) numericForm[key] = parseFloat(form[key]);
-      const res = await axios.post("http://127.0.0.1:5000/predict", numericForm);
+      const BACKEND_URL = process.env.REACT_APP_API;
+      const res = await axios.post(`${BACKEND_URL}/predict`, numericForm);
       setResult(res.data.result);
     } catch (err) {
       console.error(err);
